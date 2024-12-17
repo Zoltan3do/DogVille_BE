@@ -97,6 +97,10 @@ public class AdoptionService {
 
     public void deleteCane(UUID id) {
         Adozione adoption = this.findById(id);
+        Cane cane = cs.findById(adoption.getDog().getId());
+        cane.setAdoptedCheck("no");
+        cane.setAdopted(false);
+        cr.save(cane);
         adozioneRepo.delete(adoption);
     }
 
