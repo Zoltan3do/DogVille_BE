@@ -15,6 +15,7 @@ env.properties
 .sts4-cache
 
 ### IntelliJ IDEA ###
+/DogVille/.idea
 .idea
 *.iws
 *.iml
