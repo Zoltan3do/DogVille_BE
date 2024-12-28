@@ -130,6 +130,10 @@ public class AdoptionService {
         if (found.getState() == StatoAdozione.IN_ATTESA_DOCUMENTI) {
             found.setDocument(url);
             adozioneRepo.save(found);
+            mailgunSender.sendAdoptionEmail(found.getUserAdoptions(), "Documento inviato da parte di " + found.getUserAdoptions().getName(),
+                    "Documento inviato per da parte di " + found.getUserAdoptions().getName() + " "
+                            + found.getUserAdoptions().getSurname()
+                            + " in attesa di approvazione");
         } else {
             throw new BadRequestException("Il documento è già stato validato!");
         }
