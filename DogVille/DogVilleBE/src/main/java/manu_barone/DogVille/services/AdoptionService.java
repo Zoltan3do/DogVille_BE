@@ -65,7 +65,7 @@ public class AdoptionService {
         Utente user = us.findByEmail(body.userEmail());
         Adozione adoption = new Adozione(dog, user);
         mailgunSender.sendAdoptionEmail(user, "Richiesta di adozione da parte di " + user.getName(),
-                "L'adozione per " + dog.getName() + " da parte di " + user.getName() + " " + user.getSurname() + " è avvenuta con successo!");
+                "La richiesta di adozione per " + dog.getName() + " da parte di " + user.getName() + " " + user.getSurname() + " è avvenuta con successo!");
         return adozioneRepo.save(adoption);
     }
 
@@ -130,10 +130,10 @@ public class AdoptionService {
         if (found.getState() == StatoAdozione.IN_ATTESA_DOCUMENTI) {
             found.setDocument(url);
             adozioneRepo.save(found);
-            mailgunSender.sendAdoptionEmail(found.getUserAdoptions(), "Documento inviato da parte di " + found.getUserAdoptions().getName(),
+            mailgunSender.sendDocumentEmail(found.getUserAdoptions(), "Documento inviato da parte di " + found.getUserAdoptions().getName(),
                     "Documento inviato per da parte di " + found.getUserAdoptions().getName() + " "
                             + found.getUserAdoptions().getSurname()
-                            + " in attesa di approvazione");
+                            + " in attesa di approvazione", url);
         } else {
             throw new BadRequestException("Il documento è già stato validato!");
         }
