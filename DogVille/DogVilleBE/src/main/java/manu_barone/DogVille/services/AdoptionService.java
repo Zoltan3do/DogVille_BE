@@ -2,6 +2,7 @@ package manu_barone.DogVille.services;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import manu_barone.DogVille.configs.MailgunSender;
 import manu_barone.DogVille.entities.Adozione;
 import manu_barone.DogVille.entities.Cane;
 import manu_barone.DogVille.entities.Utente;
@@ -44,6 +45,9 @@ public class AdoptionService {
     @Autowired
     private Cloudinary cloudinaryUploader;
 
+    @Autowired
+    private MailgunSender mailgunSender;
+
     public Adozione findById(UUID id) {
         return adozioneRepo.findById(id).orElseThrow(() -> new NotFoundException("Nessun adozione trovata"));
     }
@@ -60,6 +64,8 @@ public class AdoptionService {
         }
         Utente user = us.findByEmail(body.userEmail());
         Adozione adoption = new Adozione(dog, user);
+        mailgunSender.sendAdoptionEmail(user, "Richiesta di adozione da parte di " + user.getName(),
+                "L'adozione per " + dog.getName() + " da parte di " + user.getName() + " " + user.getSurname() + " è avvenuta con successo!");
         return adozioneRepo.save(adoption);
     }
 
@@ -78,9 +84,9 @@ public class AdoptionService {
             if (stateEnum.equals(StatoAdozione.IN_ATTESA_VISITA) && adoption.getDocument() != null
                     || stateEnum == StatoAdozione.VISITA_SUPERATA && adoption.getVisitDate() != null
                     || stateEnum == StatoAdozione.ADOZIONE_COMPLETATA && adoption.getState() == StatoAdozione.VISITA_SUPERATA) {
-                adoption .setState(stateEnum);
+                adoption.setState(stateEnum);
                 adoption.setLastUpdate(LocalDate.now());
-                if(stateEnum == StatoAdozione.ADOZIONE_COMPLETATA){
+                if (stateEnum == StatoAdozione.ADOZIONE_COMPLETATA) {
                     cane.setAdopted(true);
                     cane.setAdoptedCheck("yes");
                     cr.save(cane);
@@ -102,6 +108,10 @@ public class AdoptionService {
         cane.setAdopted(false);
         cr.save(cane);
         adozioneRepo.delete(adoption);
+        mailgunSender.sendAdoptionEmail(adoption.getUserAdoptions(), "Eliminazione adozione da parte di " + adoption.getUserAdoptions().getName(),
+                "L'adozione per " + cane.getName() + " da parte di " + adoption.getUserAdoptions().getName() + " "
+                        + adoption.getUserAdoptions().getSurname()
+                        + " è stata eliminata!");
     }
 
     public String uploadDocument(MultipartFile file, UUID idAdozione, @AuthenticationPrincipal Utente currentUtente) {

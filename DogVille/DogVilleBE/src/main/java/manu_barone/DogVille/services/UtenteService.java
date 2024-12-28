@@ -2,6 +2,7 @@ package manu_barone.DogVille.services;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import manu_barone.DogVille.configs.MailgunSender;
 import manu_barone.DogVille.entities.Cane;
 import manu_barone.DogVille.entities.ProfiloPsicologico;
 import manu_barone.DogVille.entities.Utente;
@@ -55,7 +56,6 @@ public class UtenteService {
         );
 
         Utente newUser = new Utente(body.name(), body.surname(), body.email(), bcrypt.encode(body.password()), body.address(), body.telephoneNumber());
-
         return this.userRepository.save(newUser);
     }
 
