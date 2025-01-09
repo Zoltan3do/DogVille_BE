@@ -38,13 +38,10 @@ public class JWTChecker extends OncePerRequestFilter {
             throw new UnauthorizedException("Inserire token nell' Authorization Header nel formato corretto !");
         String accessToken = authorizationHeader.split(" ")[1];
         jwt.verifyToken(accessToken);
-
         UUID idUtente = UUID.fromString(jwt.getIdFromToken(accessToken));
         Utente utenteCorrente = this.userService.findById(idUtente);
-
         Authentication authentication = new UsernamePasswordAuthenticationToken(utenteCorrente, null, utenteCorrente.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         filterChain.doFilter(request, response);
     }
 
@@ -55,5 +52,7 @@ public class JWTChecker extends OncePerRequestFilter {
         List<String> paths = Arrays.asList("/auth/**","/swagger-ui/**","/v3/api-docs/**");
         return paths.stream().anyMatch(path -> apm.match(path, request.getServletPath()));
     }
+
+
 
 }
