@@ -120,6 +120,9 @@ public class CaneService {
         Cane cane = findById(dogId);
         ProfiloPsicologico profilo = pps.getProfiloPsicologicoByType(profileType);
         if (!cane.getDogsPsycologicalProfiles().contains(profilo)) {
+            if (cane.getDogsPsycologicalProfiles().size() == 1) {
+                cane.getDogsPsycologicalProfiles().removeFirst();
+            }
             cane.getDogsPsycologicalProfiles().add(profilo);
             caneRepo.save(cane);
         }

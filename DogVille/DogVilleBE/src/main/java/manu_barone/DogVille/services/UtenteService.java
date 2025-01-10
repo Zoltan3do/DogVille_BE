@@ -117,6 +117,9 @@ public class UtenteService {
         Utente utente = findById(userId);
         ProfiloPsicologico profilo = pps.getProfiloPsicologicoByType(profileType);
         if (!utente.getUsersPsycologicalProfiles().contains(profilo)) {
+            if (utente.getUsersPsycologicalProfiles().size() == 1) {
+                utente.getUsersPsycologicalProfiles().removeFirst();
+            }
             utente.getUsersPsycologicalProfiles().add(profilo);
             userRepository.save(utente);
         }
