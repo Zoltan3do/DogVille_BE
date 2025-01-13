@@ -32,19 +32,24 @@ public class CaneController {
     private CaneService cs;
 
     @GetMapping("/filter")
-    public Page<Cane> getCani(@RequestParam(defaultValue = "0") int page,
-                              @RequestParam(defaultValue = "12") int size,
-                              @RequestParam(defaultValue = "id") String sortBy,
-                              @RequestParam(required = false) Integer age,
-                              @RequestParam(required = false) String weanedCheck,
-                              @RequestParam(required = false) String race,
-                              @RequestParam(required = false) String healthState,
-                              @RequestParam(required = false) Character gender,
-                              @RequestParam(required = false) String dogSize,
-                              @RequestParam(required = false) String adoptedCheck
-
+    public Page<Cane> getCani(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(required = false) Integer age,
+            @RequestParam(required = false) String weanedCheck,
+            @RequestParam(required = false) String race,
+            @RequestParam(required = false) String healthState,
+            @RequestParam(required = false) Character gender,
+            @RequestParam(required = false) String dogSize,
+            @RequestParam(required = false) String adoptedCheck
     ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        Sort sort = direction.equalsIgnoreCase("desc") ?
+                Sort.by(sortBy).descending() :
+                Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
         return cs.findWithFilters(adoptedCheck, age, weanedCheck, race, healthState, gender, dogSize, pageable);
     }
 
