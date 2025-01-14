@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class CaneService {
@@ -86,8 +87,8 @@ public class CaneService {
         if (body.healthState() != null) cane.setHealthState(body.healthState());
         if (body.gender() != null) cane.setGender(body.gender().charAt(0));
         if (body.description() != null) cane.setDescription(body.description());
-        if(body.weanedCheck() != null) cane.setWeanedCheck(body.weanedCheck());
-        if(body.adoptedCheck() != null) cane.setAdoptedCheck(body.adoptedCheck());
+        if (body.weanedCheck() != null) cane.setWeanedCheck(body.weanedCheck());
+        if (body.adoptedCheck() != null) cane.setAdoptedCheck(body.adoptedCheck());
         cane.setWeaned(cane.getWeanedCheck().equalsIgnoreCase("yes"));
         cane.setAdopted(cane.getAdoptedCheck().equalsIgnoreCase("yes"));
         return caneRepo.save(cane);
@@ -130,13 +131,31 @@ public class CaneService {
         return profilo;
     }
 
-    public void removeProfileFromUser(UUID dogId,String profileType) {
+    public void removeProfileFromUser(UUID dogId, String profileType) {
         Cane cane = this.findById(dogId);
         ProfiloPsicologico profilo = pps.getProfiloPsicologicoByType(profileType);
         cane.getDogsPsycologicalProfiles().remove(profilo);
         caneRepo.save(cane);
     }
 
+    /**
+     * @param dogList Lista di CaneDTO con i dettagli dei cani da aggiungere.
+     * @return Lista di cani salvati.
+     */
+    public List<Cane> addMultipleCani(List<CaneDTO> dogList) {
+        List<Cane> cani = dogList.stream()
+                .map(dog -> new Cane(
+                        dog.name(),
+                        dog.age(),
+                        dog.dogSize(),
+                        dog.race(),
+                        dog.healthState(),
+                        dog.gender().charAt(0),
+                        dog.description(),
+                        dog.weaned()))
+                .collect(Collectors.toList());
+        return caneRepo.saveAll(cani);  // Salva tutti i cani nel database
+    }
 
 
 }

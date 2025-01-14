@@ -120,5 +120,15 @@ public class CaneController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/multiple")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<Cane> saveMultipleDogs(@RequestBody @Validated(Create.class) List<CaneDTO> dogList, BindingResult validationResult) {
+        if (validationResult.hasErrors()) {
+            String message = validationResult.getAllErrors().stream().map(error -> error.getDefaultMessage()).collect(Collectors.joining(". "));
+            throw new BadRequestException("Payload error: " + message);
+        }
+        return cs.addMultipleCani(dogList);
+    }
+
 
 }
