@@ -140,6 +140,32 @@ public class AdoptionService {
         return url;
     }
 
+    public String uploadSign(MultipartFile file, UUID idAdozione, @AuthenticationPrincipal Utente currentUtente) {
+        String url = null;
+        try {
+            url = (String) cloudinaryUploader.uploader().upload(file.getBytes(), ObjectUtils.emptyMap()).get("url");
+        } catch (IOException e) {
+            throw new BadRequestException("Ci sono stati problemi con l'upload del file!");
+        }
+        Adozione found = this.findById(idAdozione);
+        System.out.println(currentUtente.getId());
+        System.out.println(found.getUserAdoptions().getId());
+        if (!found.getUserAdoptions().getId().equals(currentUtente.getId())) {
+            throw new UnauthorizedException("Non hai il permesso per modificare questa adozione!");
+        }
+        if (found.getState() == StatoAdozione.IN_ATTESA_DOCUMENTI) {
+            found.setSign(url);
+            adozioneRepo.save(found);
+            mailgunSender.sendDocumentEmail(found.getUserAdoptions(), "Firma inviata da parte di " + found.getUserAdoptions().getName(),
+                    "Firma inviata per da parte di " + found.getUserAdoptions().getName() + " "
+                            + found.getUserAdoptions().getSurname()
+                            + " in attesa di approvazione", url);
+        } else {
+            throw new BadRequestException("La firma è già stato validato!");
+        }
+        return url;
+    }
+
     public LocalDate addVisitDate(LocalDate data, UUID idAdozione, @AuthenticationPrincipal Utente currentUtente) {
         Adozione found = this.findById(idAdozione);
         if (found.getState().equals(StatoAdozione.IN_ATTESA_VISITA)) {

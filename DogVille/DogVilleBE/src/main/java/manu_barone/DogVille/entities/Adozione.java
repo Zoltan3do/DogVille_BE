@@ -26,6 +26,7 @@ public class Adozione {
     private UUID id;
     private LocalDate visitDate;
     private String document;
+    private String sign;
 
     @Enumerated(EnumType.STRING)
     private StatoAdozione state;
@@ -38,7 +39,7 @@ public class Adozione {
     private Cane dog;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     @JsonIgnore
     private Utente userAdoptions;
 
@@ -80,5 +81,13 @@ public class Adozione {
 
     public Utente getUserAdoptions() {
         return userAdoptions;
+    }
+
+    public String getSign() {
+        return sign;
+    }
+
+    public void setSign(String sign) {
+        this.sign = sign;
     }
 }

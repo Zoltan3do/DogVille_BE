@@ -65,12 +65,17 @@ public class AdoptionController {
 
     @DeleteMapping("/{adozioneId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCane(@PathVariable UUID adozioneId){
+    public void deleteCane(@PathVariable UUID adozioneId) {
         as.deleteCane(adozioneId);
     }
 
     @PatchMapping("/{adoptionId}/document")
     public String addDocument(@PathVariable("adoptionId") UUID adoptionId, @RequestParam("document") MultipartFile file, @AuthenticationPrincipal Utente currentUtente) {
+        return as.uploadDocument(file, adoptionId, currentUtente);
+    }
+
+    @PatchMapping("/{adoptionId}/sign")
+    public String addSign(@PathVariable("adoptionId") UUID adoptionId, @RequestParam("sign") MultipartFile file, @AuthenticationPrincipal Utente currentUtente) {
         return as.uploadDocument(file, adoptionId, currentUtente);
     }
 
