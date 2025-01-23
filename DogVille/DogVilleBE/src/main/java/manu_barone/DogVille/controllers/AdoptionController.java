@@ -76,7 +76,7 @@ public class AdoptionController {
 
     @PatchMapping("/{adoptionId}/sign")
     public String addSign(@PathVariable("adoptionId") UUID adoptionId, @RequestParam("sign") MultipartFile file, @AuthenticationPrincipal Utente currentUtente) {
-        return as.uploadDocument(file, adoptionId, currentUtente);
+        return as.uploadSign(file, adoptionId, currentUtente);
     }
 
     @PatchMapping("/{adoptionId}/setVisit/{datavisita}")
