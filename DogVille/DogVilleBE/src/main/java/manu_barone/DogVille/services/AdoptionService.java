@@ -153,16 +153,12 @@ public class AdoptionService {
         if (!found.getUserAdoptions().getId().equals(currentUtente.getId())) {
             throw new UnauthorizedException("Non hai il permesso per modificare questa adozione!");
         }
-        if (found.getState() == StatoAdozione.IN_ATTESA_DOCUMENTI) {
-            found.setSign(url);
-            adozioneRepo.save(found);
-            mailgunSender.sendDocumentEmail(found.getUserAdoptions(), "Firma inviata da parte di " + found.getUserAdoptions().getName(),
-                    "Firma inviata per da parte di " + found.getUserAdoptions().getName() + " "
-                            + found.getUserAdoptions().getSurname()
-                            + " in attesa di approvazione", url);
-        } else {
-            throw new BadRequestException("La firma è già stato validato!");
-        }
+        found.setSign(url);
+        adozioneRepo.save(found);
+        mailgunSender.sendDocumentEmail(found.getUserAdoptions(), "Firma inviata da parte di " + found.getUserAdoptions().getName(),
+                "Firma inviata per da parte di " + found.getUserAdoptions().getName() + " "
+                        + found.getUserAdoptions().getSurname()
+                        + " in attesa di approvazione", url);
         return url;
     }
 
