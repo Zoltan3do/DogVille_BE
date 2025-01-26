@@ -43,7 +43,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173","http://localhost:3000","http://localhost:3001","good-elbertina-zoltan3do-dbe0e6a5.koyeb.app"));
+        configuration.setAllowedOrigins(Arrays.asList("https://dogville.netlify.app","http://localhost:5173","http://localhost:3000","http://localhost:3001","good-elbertina-zoltan3do-dbe0e6a5.koyeb.app"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
 
